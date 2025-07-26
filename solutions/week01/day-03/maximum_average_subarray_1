@@ -1,0 +1,74 @@
+### [643. Maximum Average Subarray I](https://leetcode.com/problems/maximum-average-subarray-i/)
+
+**Date:** July 23, 2025
+**Pattern:** Fixed-Size Sliding Window
+
+---
+
+### 1. Thought Process
+
+- **Inputs & Outputs:** The input is an integer array `nums` and an integer `k`. The output is a `double` representing the maximum average of any contiguous subarray of length `k`.
+
+- **Constraints:** The length of the array `n` and `k` are within reasonable bounds.
+
+- **My Approach (Sliding Window):**
+  1.  A brute-force approach would be to iterate through every possible starting point of a subarray, and for each one, calculate the sum of the next `k` elements. This would involve nested loops and result in an O(n\*k) time complexity, which is inefficient.
+  2.  The optimal solution is to use a **fixed-size sliding window** of size `k`.
+  3.  **Initialization:** First, I'll calculate the sum of the very first window (from index 0 to `k-1`). I'll store this in `current_sum` and also initialize `max_sum` with this value.
+  4.  **Sliding the Window:** I will then iterate through the rest of the array, starting from index `k`. In each step, I will "slide" the window one position to the right.
+  5.  **Efficient Sum Update:** Instead of recalculating the sum of the new window from scratch, I can update the `current_sum` in O(1) time. I'll do this by adding the new element that enters the window (`nums[i]`) and subtracting the element that leaves the window from the left (`nums[i-k]`).
+  6.  After each slide, I'll compare the `current_sum` with `max_sum` and update `max_sum` if the new sum is greater.
+  7.  After the loop finishes, `max_sum` will hold the maximum sum of any subarray of size `k`.
+  8.  Finally, I'll return the result by casting `max_sum` to a `double` and dividing by `k` to get the average.
+
+---
+
+### 2. Code
+
+```java
+class Solution {
+    public double findMaxAverage(int[] nums, int k) {
+        int max_sum = 0;
+        int current_sum = 0;
+
+        // Calculate the sum of the initial window.
+        for(int i = 0; i < k; i++){
+            current_sum += nums[i];
+        }
+        max_sum = current_sum;
+
+        // Slide the window through the rest of the array.
+        for(int i = k; i < nums.length; i++){
+            // Update the sum efficiently in O(1).
+            current_sum = current_sum + nums[i] - nums[i-k];
+
+            // Update the maximum sum found so far.
+            if(current_sum > max_sum){
+                max_sum = current_sum;
+            }
+        }
+
+        // Return the average.
+        return (double)max_sum / k;
+    }
+}
+```
+
+---
+
+### 3. Complexity Analysis
+
+- **Time Complexity:** O(n)
+
+  - We iterate through the array exactly once. The initial sum calculation takes O(k) and the sliding window loop takes O(n-k). The total time is O(k + n - k) = O(n).
+
+- **Space Complexity:** O(1)
+  - The algorithm uses only a few variables to store the sums and pointers. The space required is constant and does not depend on the size of the input array.
+
+---
+
+### 4. Key Takeaways & Learnings
+
+- This problem is a perfect introduction to the **fixed-size sliding window** pattern.
+- The most important concept is the efficient O(1) update of the window's sum by adding the new element and subtracting the old one. This is the key optimization over the brute-force method.
+- This pattern is applicable to any problem that asks for a value (max, min, average) of a contiguous subarray of a fixed size.
